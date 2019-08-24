@@ -4,13 +4,10 @@ import { UserDataResponse } from '@/api-common';
 import { Tweet, User } from './twitter-api-timeline-response';
 import APIError from './api-error';
 import analyzeData from './data-analyzer';
+import { readFileSync } from 'fs';
 
-const twitterClient = new Twitter({
-  consumer_key: 'NjRBDfyAIBs2yrPsuaSmzt4xA',
-  consumer_secret: '2Tpob5RvziUosZUGR30UTRW61UgHfGcPC7RvrZtgl6FvPStf4q',
-  access_token_key: '1147698208518430721-xKsIL1n8zoiASiur9OaAIFACCQa1Bc',
-  access_token_secret: 'eYUyWym0WFVnJRuYySNscmlVfkDT45DAjYeULipbrKEub',
-});
+const apiKeys = JSON.parse(readFileSync('api-keys.json', 'utf8')) as Twitter.AccessTokenOptions;
+const twitterClient = new Twitter(apiKeys);
 
 const server = express();
 
