@@ -6,7 +6,7 @@ import APIError from './api-error';
  * Counts the values of an array and returns them in a map with the
  * value as the key and the number of instances of that value as the value.
  * This method excludes undefined values.
- * @param array The array to count the instances of
+ * @param array the array to count the instances of
  * @returns the map containing the number of instances of each array value.
  */
 function countArrayValues<T>(array: T[]): Map<T, number> {
@@ -34,7 +34,7 @@ function createTweetsPerMonthGraph(tweets: Tweet[]): Graph {
 /**
  * Creates a generic graph with a data point for each tweet.
  * @param tweets
- * @param getValue The function that returns the y value on the graph for each tweet
+ * @param getValue the function that returns the y value on the graph for each tweet
  */
 function createTweetGraph(tweets: Tweet[], getValue: (tweet: Tweet) => number): Graph {
   return tweets.map((tweet) => ({
@@ -43,6 +43,12 @@ function createTweetGraph(tweets: Tweet[], getValue: (tweet: Tweet) => number): 
   }));
 }
 
+/**
+ * Creates a multiline graph where each line is a term. Uses the 5 most used terms.
+ * @param tweets
+ * @param getTerms
+ * @param amount the number of lines to graph
+ */
 function createMultiLineTermGraph(
   tweets: Tweet[],
   getTerms: (tweet: Tweet) => string[],
