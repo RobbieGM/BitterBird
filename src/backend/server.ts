@@ -1,7 +1,6 @@
 import express from 'express';
 import Twitter from 'twitter';
-import { UserDataResponse } from '@/api-common';
-import { Tweet, User } from './twitter-api-timeline-response';
+import { Tweet } from './twitter-api-timeline-response';
 import APIError from './api-error';
 import analyzeData from './data-analyzer';
 import { readFileSync } from 'fs';

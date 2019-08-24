@@ -21,4 +21,4 @@ yarn-error.log*
 *.sw?
 
 # API keys
-/src/backend/api-keys.json
+src/backend/api-keys.json
