@@ -6,13 +6,16 @@
     </div>
     <router-view/>-->
     <div id='top-bar'>
-      <img src='img/icons/logo-60x60.png' />
-      <b id='name'>BitterBird</b>
+      <router-link to='/' id='main-page-link'>
+        <img src='/img/icons/logo-60x60.png'/>
+        <b id='name'>BitterBird</b>
+      </router-link>
       <div id='search-container'>
         <span id='search-icon' class='material-icons'>search</span>
-        <input type='text' id='search' placeholder='Search Twitter users...' />
+        <input type='text' id='search' v-model='query' placeholder='Enter a Twitter handle or link to a profile...' ref='searchBar' @keydown.enter='search()'/>
       </div>
     </div>
+    <router-view @search='focusSearch()'/>
   </div>
 </template>
 
@@ -20,23 +23,6 @@
 @import url('https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,700&display=swap');
 @import url('https://fonts.googleapis.com/icon?family=Material+Icons');
 @import './style/common.scss';
-
-html,
-body {
-  margin: 0;
-  background: $off-white;
-}
-
-* {
-  touch-action: manipulation;
-}
-
-.material-icons { user-select: none; }
-
-#app {
-  font-family: 'Source Sans Pro', 'Avenir', Helvetica, Arial, sans-serif;
-  color: $text;
-}
 
 #top-bar {
   max-width: 100%;
@@ -48,6 +34,12 @@ body {
   align-items: center;
   padding: 12px;
   box-sizing: border-box;
+  #main-page-link {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    color: inherit;
+  }
   img {
     width: 36px;
     height: 36px;
@@ -107,5 +99,39 @@ import Vue from 'vue';
 import { Component } from 'vue-property-decorator';
 
 @Component({})
-export default class App extends Vue {}
+export default class App extends Vue {
+
+  private query: string = '';
+
+  private focusSearch() {
+    (this.$refs.searchBar as HTMLElement).focus();
+  }
+
+  private stripUsernameFromURL(query: string) {
+    try {
+      const url = new URL(query);
+      if (url.hostname === 'twitter.com') {
+        return url.pathname.replace('/', '');
+      }
+    } catch (err) {
+      if (err instanceof TypeError) { // invalid URL
+        return query;
+      } else {
+        throw err;
+      }
+    }
+    return query;
+  }
+
+  private search() {
+    if (this.query) {
+      this.query = this.stripUsernameFromURL(this.query);
+      this.viewProfile(this.query);
+    }
+  }
+
+  private viewProfile(handle: string) {
+    this.$router.push(`/profile/${handle}`);
+  }
+}
 </script>

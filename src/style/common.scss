@@ -8,4 +8,59 @@ $text: rgba(0, 0, 0, 0.8);
 $text-light: rgba(255, 255, 255, 0.8);
 $off-white: #fafafa;
 $light-gray: #f0f0f0;
-$gray: #888888;
+$gray: rgba(0, 0, 0, 0.45);
+
+html,
+body {
+  margin: 0;
+  background: $off-white;
+}
+
+h1, h2, h3, h4, h5, h6 { margin-top: 0 }
+
+* {
+  touch-action: manipulation;
+  box-sizing: border-box;
+}
+
+.material-icons { user-select: none; }
+
+#app {
+  font-family: 'Source Sans Pro', 'Avenir', Helvetica, Arial, sans-serif;
+  color: $text;
+}
+
+.card-container {
+  display: flex;
+  flex-wrap: wrap;
+  margin: 12px;
+}
+
+.card {
+  flex: 1;
+  border-radius: 8px;
+  background: white;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
+  margin: 12px;
+  min-width: 150px;
+  min-height: 100px;
+  padding: 24px;
+}
+
+button {
+  cursor: pointer;
+  border: none;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  outline: none;
+  appearance: none;
+  font-size: inherit;
+  padding: 8px 16px;
+  color: $text;
+  transition: background 0.2s;
+  border-radius: 3px;
+  background: $light-gold;
+  &:active {
+    transition: none;
+    background: $dark-gold;
+  }
+}
