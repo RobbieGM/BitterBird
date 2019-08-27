@@ -3,9 +3,9 @@ import Twitter from 'twitter';
 import { Tweet } from './twitter-api-timeline-response';
 import APIError from './api-error';
 import analyzeData from './data-analyzer';
-import { readFileSync } from 'fs';
+import { readFileSync, writeFileSync } from 'fs';
 
-const apiKeys = JSON.parse(readFileSync('api-keys.json', 'utf8')) as Twitter.AccessTokenOptions;
+const apiKeys = JSON.parse(readFileSync(__dirname + '/api-keys.json', 'utf8')) as Twitter.AccessTokenOptions;
 const twitterClient = new Twitter(apiKeys);
 
 const server = express();
@@ -34,12 +34,10 @@ server.get('/api/user-info', async (req, res) => {
     const tweets: Tweet[] = (await twitterClient.get('statuses/user_timeline', {
       screen_name: req.query.handle,
       include_rts: 1,
-      count: 1,
+      count: 200,
     })) as Tweet[];
-    console.log('tweets:', tweets);
     res.send(analyzeData(tweets as Tweet[]));
   } catch (err) {
-    console.error(err);
     if (isTwitterAPIResponseError(err)) {
       res.status(500).send(err[0].message);
     } else if (err instanceof Error && err.message.includes('401')) {
@@ -47,7 +45,7 @@ server.get('/api/user-info', async (req, res) => {
     } else if (err instanceof APIError) {
       res.status(500).send(err.message);
     } else {
-      // console.error(err);
+      console.error(err);
       res.status(500).send('Something went wrong on our end.');
     }
   }

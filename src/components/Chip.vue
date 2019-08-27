@@ -16,6 +16,7 @@
   height: 24px;
   align-items: center;
   font-size: 0.9rem;
+  vertical-align: bottom; // For some reason they don't line up right if this isn't here
   .material-icons {
     color: $gray;
     height: 18px;

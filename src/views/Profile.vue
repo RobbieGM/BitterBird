@@ -5,7 +5,7 @@
         <h3>Profile Info</h3>
         <img :src='response.basicProfileInfo.profilePictureURL' class='profile-pic'/>
         <div class='username-and-handle'>
-          <b>{{ response.basicProfileInfo.name }}</b> (@{{ response.basicProfileInfo.handle }})
+          <b>{{ response.basicProfileInfo.name }}</b>&nbsp;<wbr/>(<a :href='`https://twitter.com/${response.basicProfileInfo.handle}`'>@{{ response.basicProfileInfo.handle }}</a>)
         </div>
         <span class='material-icons verified-user' v-if='response.basicProfileInfo.verified'>verified_user</span>
         <br/>
@@ -17,14 +17,15 @@
         <br/>
         <span v-if='response.basicProfileInfo.description'>Description: {{ response.basicProfileInfo.description }}</span>
       </div>
+      <GraphCard :graph='response.latestTweetData' type='scatter' title='Basic tweet data'/>
+      <GraphCard :graph='[{term: "Tweets", points: response.tweetsPerMonth}]' type='bar' title='Tweets per month'/>
+      <GraphCard :graph='response.mostUsedHashtags' title='Hashtag uses'/>
+      <GraphCard :graph='response.mostMentionedPeople' title='Mentioned people'/>
+      <GraphCard :graph='response.mostRetweetedPeople' title='Retweeted people'/>
+      <GraphCard :graph='response.mostUsedWords' title='Most used words'/>
       <div class='card'>
-        <h3>Card 2</h3>
-      </div>
-      <div class='card'>
-        <h3>Card 3</h3>
-      </div>
-      <div class='card'>
-        <h3>Card 4</h3>
+        <h3>Average tweet length</h3>
+        <h1>{{ response.averageTweetLength }}</h1>
       </div>
     </div>
     <div class='loading-container' v-else>
@@ -92,21 +93,18 @@
 
 <script lang='ts'>
 import Vue from 'vue';
-import { UserDataResponse } from '@/api-common';
+import { UserDataResponse, MultiLineGraph } from '@/api-common';
 import { Component, Watch } from 'vue-property-decorator';
 import Chip from '@/components/Chip.vue';
+import GraphCard from '@/components/GraphCard.vue';
 import Chart from 'chart.js';
 
 @Component({
-  components: {Chip},
+  components: {Chip, GraphCard},
 })
 export default class Profile extends Vue {
   public errorMessage?: string | null = null;
   public response?: UserDataResponse | null = null;
-
-  get apiOrigin() {
-    return location.protocol + '//' + location.hostname + ':81';
-  }
 
   private created() {
     this.loadUserData();
@@ -120,8 +118,9 @@ export default class Profile extends Vue {
   private async loadUserData() {
     this.errorMessage = null;
     this.response = null;
+    const apiOrigin = location.protocol + '//' + location.hostname + ':81';
     try {
-      const resp = await fetch(`${this.apiOrigin}/api/user-info?handle=${this.$route.params.handle}`);
+      const resp = await fetch(`${apiOrigin}/api/user-info?handle=${this.$route.params.handle}`);
       if (resp.ok) {
         this.response = await resp.json();
       } else {

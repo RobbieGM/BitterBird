@@ -15,32 +15,29 @@ export interface UserDataResponse {
    * Bar graph for each month showing number of tweets posted.
    */
   tweetsPerMonth: Graph;
-  /**
-   * Very long bar graph (up to 200 bars) or line graph where each bar represents a tweet and its height represents how many likes it has.
-   */
-  latestTweetLikes: Graph;
-  /**
-   * Like latestTweetLikes but with reshares, not likes.
-   */
-  latestTweetRetweets: Graph;
+  latestTweetData: MultiLineGraph;
   mostUsedHashtags: MultiLineGraph;
-  mostMentionedPeople: TermOccurrenceList;
-  mostRetweetedPeople: TermOccurrenceList;
+  mostMentionedPeople: MultiLineGraph;
+  mostRetweetedPeople: MultiLineGraph;
   // sentiment: Graph;
-  // mostUsedWords: MultiLineGraph;
-  // averageTweetLength: number;
-  // readingGradeLevel: number;
+  mostUsedWords: MultiLineGraph;
+  averageTweetLength: number;
+  readingGradeLevel: number;
 }
 
-type TermOccurrenceList = Array<{
+interface TermOccurrenceList extends Array<Term> {}
+
+interface Term {
   term: string;
   occurrences: number;
-}>;
+}
 
-type MultiLineGraph = Array<{
+interface MultiLineGraph extends Array<LabeledGraph> {}
+
+interface LabeledGraph {
   term: string;
   points: Graph;
-}>;
+}
 
 type Graph = GraphPoint[];
 

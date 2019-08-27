@@ -1,10 +1,5 @@
 <template>
   <div id='app'>
-    <!-- <div id='nav'>
-      <router-link to='/'>Home</router-link> |
-      <router-link to='/about'>About</router-link>
-    </div>
-    <router-view/>-->
     <div id='top-bar'>
       <router-link to='/' id='main-page-link'>
         <img src='/img/icons/logo-60x60.png'/>
@@ -97,8 +92,11 @@
 <script lang='ts'>
 import Vue from 'vue';
 import { Component } from 'vue-property-decorator';
+import GraphCard from './components/GraphCard.vue';
 
-@Component({})
+@Component({
+  components: {GraphCard},
+})
 export default class App extends Vue {
 
   private query: string = '';
@@ -107,25 +105,25 @@ export default class App extends Vue {
     (this.$refs.searchBar as HTMLElement).focus();
   }
 
-  private stripUsernameFromURL(query: string) {
-    try {
-      const url = new URL(query);
-      if (url.hostname === 'twitter.com') {
-        return url.pathname.replace('/', '');
-      }
-    } catch (err) {
-      if (err instanceof TypeError) { // invalid URL
-        return query;
-      } else {
-        throw err;
-      }
-    }
-    return query;
-  }
-
   private search() {
+    function stripUsernameFromURL(query: string) {
+      try {
+        const url = new URL(query);
+        if (url.hostname === 'twitter.com') {
+          return url.pathname.replace('/', '');
+        }
+      } catch (err) {
+        if (err instanceof TypeError) { // invalid URL
+          return query;
+        } else {
+          throw err;
+        }
+      }
+      return query;
+    }
+    const removeAtSign = (handle: string) => handle.startsWith('@') ? handle.slice(1) : handle;
     if (this.query) {
-      this.query = this.stripUsernameFromURL(this.query);
+      this.query = removeAtSign(stripUsernameFromURL(this.query));
       this.viewProfile(this.query);
     }
   }
