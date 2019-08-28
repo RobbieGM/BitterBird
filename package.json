@@ -25,6 +25,7 @@
     "sentiment": "^5.0.2",
     "syllable": "^4.0.0",
     "ts-node": "^8.3.0",
+    "typescript": "^3.6.2",
     "twitter": "^1.7.1",
     "vue": "^2.6.10",
     "vue-class-component": "^7.0.2",
@@ -40,7 +41,7 @@
     "@vue/cli-service": "^3.10.0",
     "node-sass": "^4.9.0",
     "sass-loader": "^7.1.0",
-    "typescript": "^3.4.3",
+    "typescript": "^3.6.2",
     "vue-template-compiler": "^2.6.10"
   }
 }
