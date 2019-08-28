@@ -7,7 +7,8 @@
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
     "backend": "ts-node --project server-tsconfig.json ./src/backend/api-server.ts",
-    "serve-prod": "ts-node --project server-tsconfig.json ./src/backend/http-server.ts"
+    "serve-prod": "ts-node --project server-tsconfig.json ./src/backend/http-server.ts",
+    "start": "ts-node --project server-tsconfig.json ./src/backend/http-server.ts"
   },
   "dependencies": {
     "@types/chart.js": "^2.8.3",
