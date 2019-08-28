@@ -213,9 +213,7 @@ export default function analyzeData(tweets: Tweet[]): UserDataResponse {
     sentiment: average(
       tweets.map((t) => {
         const text = removeEntities(getTweetText(getOriginal(t)));
-        const sentiment = getSentiment(text);
-        console.log('text', text, 'has a sentiment of', sentiment);
-        return sentiment;
+        return getSentiment(text);
       })
     ),
     averageEntities: average(tweets.map((t) => countEntities(t))),

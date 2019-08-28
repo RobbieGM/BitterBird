@@ -26,7 +26,7 @@ function handleIsValid(handle: string) {
 }
 
 server.get('/api/user-info', async (req, res) => {
-  res.setHeader('Access-Control-Allow-Origin', 'http://localhost:8080');
+  res.setHeader('Access-Control-Allow-Origin', '*');
   try {
     if (!handleIsValid(req.query.handle)) {
       throw new APIError('Sorry, that page does not exist.');
