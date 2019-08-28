@@ -13,7 +13,7 @@ app.use(history({
 }));
 app.use(staticFileMiddleware);
 
-const port = 8080;
+const port = process.argv[process.argv.length - 1] || 80;
 app.listen(port, () => {
   console.log(`Example app listening on port ${port} serving ${distDir}`);
 });
