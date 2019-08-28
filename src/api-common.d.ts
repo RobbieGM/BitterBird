@@ -19,10 +19,10 @@ export interface UserDataResponse {
   mostUsedHashtags: MultiLineGraph;
   mostMentionedPeople: MultiLineGraph;
   mostRetweetedPeople: MultiLineGraph;
-  // sentiment: Graph;
+  sentiment: number;
   mostUsedWords: MultiLineGraph;
   averageTweetLength: number;
-  readingGradeLevel: number;
+  writingGradeLevel: number;
 }
 
 interface TermOccurrenceList extends Array<Term> {}

@@ -79,7 +79,7 @@
   }
 }
 
-@media screen and (max-width: 430px) {
+@media screen and (max-width: 480px) {
   b#name {
     display: none;
   }
@@ -109,7 +109,7 @@ export default class App extends Vue {
     function stripUsernameFromURL(query: string) {
       try {
         const url = new URL(query);
-        if (url.hostname === 'twitter.com') {
+        if (url.hostname.endsWith('twitter.com')) {
           return url.pathname.replace('/', '');
         }
       } catch (err) {

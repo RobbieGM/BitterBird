@@ -1,13 +1,23 @@
 <template>
   <div class='card'>
     <h3 v-if='title'>{{ title }}</h3>
-    <canvas ref='canvas' v-if='graph.length !== 0'></canvas>
+    <div class='canvas-container'>
+      <canvas ref='canvas' v-if='graph.length !== 0'></canvas>
+    </div>
     <!--div data-test-v-else>This graph has no data to display.</div-->
   </div>
 </template>
 
 <style lang='scss' scoped>
-
+.card {
+  overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
+  .canvas-container {
+    flex: 1;
+    overflow-x: hidden;
+  }
+}
 </style>
 
 <script lang='ts'>
@@ -51,6 +61,8 @@ export default class GraphCard extends Vue {
       type: this.type,
       data: chartData,
       options: {
+        maintainAspectRatio: false,
+        // responsive: false,
         scales: {
           xAxes: [{
             type: 'time',
@@ -66,6 +78,11 @@ export default class GraphCard extends Vue {
         plugins: {
           colorschemes: {
             scheme: 'tableau.SuperfishelStone10',
+          },
+        },
+        legend: {
+          labels: {
+            fontFamily: getComputedStyle(document.getElementById('name') as HTMLElement).fontFamily as string,
           },
         },
       },

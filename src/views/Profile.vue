@@ -18,14 +18,22 @@
         <span v-if='response.basicProfileInfo.description'>Description: {{ response.basicProfileInfo.description }}</span>
       </div>
       <GraphCard :graph='response.latestTweetData' type='scatter' title='Basic tweet data'/>
-      <GraphCard :graph='[{term: "Tweets", points: response.tweetsPerMonth}]' type='bar' title='Tweets per month'/>
+      <GraphCard :graph='[{term: "Tweets", points: response.tweetsPerMonth}]' type='bar' title='Monthly tweets'/>
       <GraphCard :graph='response.mostUsedHashtags' title='Hashtag uses'/>
       <GraphCard :graph='response.mostMentionedPeople' title='Mentioned people'/>
       <GraphCard :graph='response.mostRetweetedPeople' title='Retweeted people'/>
       <GraphCard :graph='response.mostUsedWords' title='Most used words'/>
-      <div class='card'>
+      <div class='small card'>
         <h3>Average tweet length</h3>
-        <h1>{{ response.averageTweetLength }}</h1>
+        <div class='data'><b>{{ response.averageTweetLength }}</b> characters</div>
+      </div>
+      <div class='small card'>
+        <h3>Writing level</h3>
+        <div class='data'>Grade <b>{{ response.writingGradeLevel }}</b></div>
+      </div>
+      <div class='small card'>
+        <h3>Sentiment</h3>
+        <div class='data'><b>{{ getSentimentDescription(response.sentiment) }}</b> ({{ (response.sentiment > 0 ? '+' : '') + response.sentiment.toFixed(2) }})</div>
       </div>
     </div>
     <div class='loading-container' v-else>
@@ -38,6 +46,14 @@
 
 <style lang='scss' scoped>
 @import '@/style/common.scss';
+
+.card /deep/ h3 {
+  margin-bottom: 8px;
+}
+
+.small.card div.data {
+  text-align: center;
+}
 
 .basic-profile-info {
   .profile-pic {
@@ -129,6 +145,26 @@ export default class Profile extends Vue {
     } catch (err) {
       console.error('Error occurred while fetching:', err);
       this.errorMessage = 'No connection';
+    }
+  }
+
+  private leadingSign(n: number) {
+    return (n > 0 ? '+' : '') + n;
+  }
+
+  private getSentimentDescription(sentiment: number) {
+    // Sentiments tend to be skewed positive
+    console.log('getSentimentDescription of', sentiment);
+    if (sentiment > 0.1) {
+      return 'Very positive';
+    } else if (sentiment > 0.05) {
+      return 'Mostly positive';
+    } else if (sentiment > -0.03) {
+      return 'Mostly neutral';
+    } else if (sentiment > -0.05) {
+      return 'Mostly negative';
+    } else {
+      return 'Very negative';
     }
   }
 }

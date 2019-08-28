@@ -1,10 +1,13 @@
-import { Tweet, User } from './twitter-api-timeline-response';
+import { Tweet, User, TruncatedTweet, UntruncatedTweet } from './twitter-api-timeline-response';
 import { UserDataResponse, Graph, MultiLineGraph, TermOccurrenceList as TermOccurrenceList } from '@/api-common';
 import APIError from './api-error';
 import { readFileSync, readdirSync } from 'fs';
 import { join } from 'path';
 import fleschKincaid from 'flesch-kincaid';
 import syllables from 'syllable';
+import nlp from 'wink-nlp-utils';
+import Sentiment from 'sentiment';
+import memoize from './memoize';
 
 function flattenOneLevel<T>(arrays: T[][]): T[] {
   return ([] as T[]).concat(...arrays);
@@ -14,6 +17,8 @@ const MOST_COMMON_WORDS = flattenOneLevel(readdirSync(join(__dirname, 'most-comm
   const fullFilename = join(__dirname, 'most-common-words', filename);
   return readFileSync(fullFilename).toString().split(/\r?\n/);
 }));
+
+console.log('Loaded most common word list');
 
 /**
  * Counts the values of an array and returns them in a map with the
@@ -98,10 +103,11 @@ function getTopTerms(tweets: Tweet[], getTerms: (tweet: Tweet) => string[], amou
   }));
 }
 
-// const getEntitiesIfOriginal = (getEntities: (tweet: Tweet) => string[]) => (tweet: Tweet) => {
-//   const log = <T>(x: T) => (console.log(x), x);
-//   return tweet.retweeted_status ? [] : log(getEntities(tweet));
-// };
+function getTweetText(tweet: Tweet) {
+  const isUntruncated = (t: Tweet): t is UntruncatedTweet => 'full_text' in t;
+  return isUntruncated(tweet) ? tweet.full_text : tweet.text;
+}
+
 const getMentionedPeople = (tweet: Tweet) => tweet.entities.user_mentions.map((mention) => '@' + mention.screen_name);
 const getOriginalPosterHandleAsArray = (tweet: Tweet) => {
   return tweet.retweeted_status ? ['@' + tweet.retweeted_status.user.screen_name] : [];
@@ -109,34 +115,52 @@ const getOriginalPosterHandleAsArray = (tweet: Tweet) => {
 const getHashtags = (tweet: Tweet) => tweet.entities.hashtags.map((hashtag) => '#' + hashtag.text);
 const getOriginal = (tweet: Tweet) => tweet.retweeted_status ? tweet.retweeted_status : tweet;
 
+const removeHashtags = (text: string) => text.replace(/#\w+\b/g, '');
+const removeMentions = (text: string) => text.replace(/@\w+\b/g, '');
+const removeEntities = (text: string) => removeHashtags(removeMentions(removeURLs(text)));
+
 function removeURLs(text: string) {
-  const url = /[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)?/gi;
+  const url = /(https?:\/\/)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)?/gi;
   return text.replace(url, '');
 }
 
-function getRealWords(text: string): string[] {
-  let matches = removeURLs(text).match(/([#@]?[A-Za-z]+)/g);
-  if (matches === null) {
-    matches = [];
-  }
-  const removeHashtags = (word: string) => !word.startsWith('#');
-  const removeMentions = (word: string) => !word.startsWith('@');
-  return matches.filter(removeHashtags).filter(removeMentions);
-}
+/**
+ * Returns the words of a string, not including fake words detected by the nlp algorithm such as "'s" or "n't"
+ * @param text The text to analyze
+ * @returns A list of words from the string
+ */
+let getRealWords = (text: string) => {
+  return nlp.string.tokenize(text, true)
+    .filter((token) => token.tag === 'word')
+    .map((token) => token.value)
+    .filter((word: string) => !word.includes('\''));
+};
+getRealWords = memoize(getRealWords);
 
 function getSignificantWords(tweet: Tweet) {
   const removeCommonWords = (word: string) => !MOST_COMMON_WORDS.includes(word.toLowerCase());
-  return getRealWords(tweet.text).filter(removeCommonWords);
+  return getRealWords(getTweetText(tweet)).filter(removeCommonWords);
 }
 
-const average = (array: number[]) => array.reduce((a, b) => a + b) / array.length;
+const average = (array: number[]) => array.reduce((a, b) => a + b, 0) / array.length;
 
-function gradeLevel(text: string) {
-  return fleschKincaid({
-    word: getRealWords(text).length,
-    sentence: removeURLs(text).split('.').length,
-    syllable: syllables(text),
-  });
+function gradeLevel(rawText: string): number | undefined {
+  const parsed = removeEntities(rawText);
+  const info = {
+    word: getRealWords(parsed).length,
+    sentence: nlp.string.sentences(parsed).length,
+    syllable: syllables(parsed),
+  };
+  if (info.word < 2 || info.sentence < 1 || info.syllable < 5) {
+    return undefined;
+  }
+  const level = Math.max(1, fleschKincaid(info));
+  return level;
+}
+
+const sentimentAnalyzer = new Sentiment();
+function getSentiment(text: string) {
+  return sentimentAnalyzer.analyze(text).comparative;
 }
 
 export default function analyzeData(tweets: Tweet[]): UserDataResponse {
@@ -145,6 +169,9 @@ export default function analyzeData(tweets: Tweet[]): UserDataResponse {
     throw new APIError('This user hasn\'t posted any tweets, so we can\'t analyze them.');
   }
   const user: User = tweets[0].user;
+  const removeUndefinedNumbers = (level: number | undefined): level is number => level !== undefined;
+  const gradeLevelOfTweet = (tweet: Tweet) => gradeLevel(removeURLs(getTweetText(getOriginal(tweet))));
+
   return {
     basicProfileInfo: {
       followers: user.followers_count,
@@ -173,7 +200,15 @@ export default function analyzeData(tweets: Tweet[]): UserDataResponse {
     mostRetweetedPeople: createMultiLineTermGraph(tweets, getOriginalPosterHandleAsArray, 5),
     mostUsedHashtags: createMultiLineTermGraph(tweets, getHashtags, 5),
     mostUsedWords: createMultiLineTermGraph(tweets, getSignificantWords, 5),
-    averageTweetLength: Math.round(average(tweets.map((t) => getOriginal(t).text.length))),
-    readingGradeLevel: average(tweets.map((t) => gradeLevel(getOriginal(t).text))),
+    averageTweetLength: Math.round(average(tweets.map((t) => getTweetText(getOriginal(t)).length))),
+    writingGradeLevel: Math.round(average(tweets.map((t) => gradeLevelOfTweet(t)).filter(removeUndefinedNumbers))),
+    sentiment: average(
+      tweets.map((t) => {
+        const text = removeEntities(getTweetText(getOriginal(t)));
+        const sentiment = getSentiment(text);
+        console.log('text', text, 'has a sentiment of', sentiment);
+        return sentiment;
+      }),
+    ),
   };
 }

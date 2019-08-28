@@ -31,21 +31,31 @@ h1, h2, h3, h4, h5, h6 { margin-top: 0 }
 }
 
 .card-container {
-  display: flex;
-  flex-wrap: wrap;
-  margin: 12px;
+  // display: flex;
+  // flex-wrap: wrap;
+  display: grid;
+  margin: 24px;
+  grid-gap: 24px;
+  grid-template-columns: repeat(auto-fit, minmax(188px, 1fr));
+  grid-auto-rows: minmax(96px, max-content);
+  grid-auto-flow: row dense;
 }
 
 .card {
-  flex: 1;
+  // flex-basis: 400px;
+  grid-column-start: auto;
+  grid-row-start: auto;
+  &:not(.small) {
+    grid-column-end: span 2;
+    grid-row-end: span 2;
+  }
+  // flex: 1;
   border-radius: 8px;
   background: white;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
-  margin: 12px;
-  min-width: 150px;
-  min-height: 100px;
+  // min-width: 150px;
+  // min-height: 100px;
   padding: 24px;
-  flex-basis: 400px;
 }
 
 button {

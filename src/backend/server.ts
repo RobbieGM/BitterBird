@@ -3,7 +3,7 @@ import Twitter from 'twitter';
 import { Tweet } from './twitter-api-timeline-response';
 import APIError from './api-error';
 import analyzeData from './data-analyzer';
-import { readFileSync, writeFileSync } from 'fs';
+import { readFileSync } from 'fs';
 
 const apiKeys = JSON.parse(readFileSync(__dirname + '/api-keys.json', 'utf8')) as Twitter.AccessTokenOptions;
 const twitterClient = new Twitter(apiKeys);
@@ -35,6 +35,7 @@ server.get('/api/user-info', async (req, res) => {
       screen_name: req.query.handle,
       include_rts: 1,
       count: 200,
+      tweet_mode: 'extended',
     })) as Tweet[];
     res.send(analyzeData(tweets as Tweet[]));
   } catch (err) {

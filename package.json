@@ -16,14 +16,18 @@
     "chart.js": "^2.8.0",
     "chartjs-plugin-colorschemes": "^0.4.0",
     "core-js": "^2.6.5",
+    "esm": "^3.2.25",
     "flesch-kincaid": "^1.0.4",
     "register-service-worker": "^1.6.2",
+    "sentiment": "^5.0.2",
     "syllable": "^4.0.0",
+    "ts-node": "^8.3.0",
     "twitter": "^1.7.1",
     "vue": "^2.6.10",
     "vue-class-component": "^7.0.2",
     "vue-property-decorator": "^8.1.0",
-    "vue-router": "^3.0.3"
+    "vue-router": "^3.0.3",
+    "wink-nlp-utils": "^2.0.5"
   },
   "devDependencies": {
     "@types/node": "^12.7.2",

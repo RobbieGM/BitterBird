@@ -1,8 +1,7 @@
-export interface Tweet {
+export interface TweetWithoutText {
   created_at: string;
   id: number;
   id_str: string;
-  text: string;
   truncated: boolean;
   entities: TweetEntities;
   source: string;
@@ -29,6 +28,16 @@ export interface Tweet {
   possibly_sensitive?: boolean;
   lang: string;
 }
+
+interface TruncatedTweet extends TweetWithoutText {
+  text: string;
+}
+
+interface UntruncatedTweet extends TweetWithoutText {
+  full_text: string;
+}
+
+type Tweet = TruncatedTweet | UntruncatedTweet;
 
 export interface Place {
   id: string;
