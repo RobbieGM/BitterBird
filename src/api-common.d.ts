@@ -23,6 +23,7 @@ export interface UserDataResponse {
   mostUsedWords: MultiLineGraph;
   averageTweetLength: number;
   writingGradeLevel: number;
+  averageEntities: number;
 }
 
 interface TermOccurrenceList extends Array<Term> {}

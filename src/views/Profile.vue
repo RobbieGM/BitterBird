@@ -23,17 +23,23 @@
       <GraphCard :graph='response.mostMentionedPeople' title='Mentioned people'/>
       <GraphCard :graph='response.mostRetweetedPeople' title='Retweeted people'/>
       <GraphCard :graph='response.mostUsedWords' title='Most used words'/>
-      <div class='small card'>
-        <h3>Average tweet length</h3>
-        <div class='data'><b>{{ response.averageTweetLength }}</b> characters</div>
-      </div>
-      <div class='small card'>
-        <h3>Writing level</h3>
-        <div class='data'>Grade <b>{{ response.writingGradeLevel }}</b></div>
-      </div>
-      <div class='small card'>
-        <h3>Sentiment</h3>
-        <div class='data'><b>{{ getSentimentDescription(response.sentiment) }}</b> ({{ (response.sentiment > 0 ? '+' : '') + response.sentiment.toFixed(2) }})</div>
+      <div class='small-2x2-card-container'>
+        <div class='small card'>
+          <h3>Average tweet length</h3>
+          <div class='data'><b>{{ response.averageTweetLength }}</b> characters</div>
+        </div>
+        <div class='small card'>
+          <h3>Writing level</h3>
+          <div class='data'>Grade <b>{{ response.writingGradeLevel }}</b></div>
+        </div>
+        <div class='small card'>
+          <h3>Sentiment</h3>
+          <div class='data'><b>{{ getSentimentDescription(response.sentiment) }}</b> ({{ (response.sentiment > 0 ? '+' : '') + response.sentiment.toFixed(2) }})</div>
+        </div>
+        <div class='small card'>
+          <h3>Average entity density</h3>
+          <div class='data'><b>{{ response.averageEntities.toFixed(1) }}</b> hashtags, mentions, or URLs per tweet</div>
+        </div>
       </div>
     </div>
     <div class='loading-container' v-else>

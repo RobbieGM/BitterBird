@@ -163,6 +163,11 @@ function getSentiment(text: string) {
   return sentimentAnalyzer.analyze(text).comparative;
 }
 
+function countEntities(tweet: Tweet) {
+  const entities = tweet.entities;
+  return entities.hashtags.length + entities.urls.length + entities.user_mentions.length;
+}
+
 export default function analyzeData(tweets: Tweet[]): UserDataResponse {
   // Tweets are in reverse chronological order
   if (tweets.length === 0) {
@@ -201,14 +206,18 @@ export default function analyzeData(tweets: Tweet[]): UserDataResponse {
     mostUsedHashtags: createMultiLineTermGraph(tweets, getHashtags, 5),
     mostUsedWords: createMultiLineTermGraph(tweets, getSignificantWords, 5),
     averageTweetLength: Math.round(average(tweets.map((t) => getTweetText(getOriginal(t)).length))),
-    writingGradeLevel: Math.round(average(tweets.map((t) => gradeLevelOfTweet(t)).filter(removeUndefinedNumbers))),
+    writingGradeLevel: Math.round(average(
+      tweets.map((t) => gradeLevelOfTweet(t))
+        .filter(removeUndefinedNumbers)
+    )),
     sentiment: average(
       tweets.map((t) => {
         const text = removeEntities(getTweetText(getOriginal(t)));
         const sentiment = getSentiment(text);
         console.log('text', text, 'has a sentiment of', sentiment);
         return sentiment;
-      }),
+      })
     ),
+    averageEntities: average(tweets.map((t) => countEntities(t))),
   };
 }
