@@ -8,7 +8,7 @@ const distDir = __dirname.split(path.sep).slice(0, -2).concat('dist').join(path.
 // const distDir = `C:\\Users\\Robbie\\Code\\bitterbird\\dist`;
 
 const staticFileMiddleware = express.static(distDir);
-app.use(userInfoAPI);
+app.use(userInfoAPI());
 app.use(staticFileMiddleware);
 app.use(history({
   verbose: true,
