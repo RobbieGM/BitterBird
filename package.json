@@ -8,8 +8,8 @@
     "lint": "vue-cli-service lint",
     "api-server": "ts-node --project server-tsconfig.json ./src/backend/api-only-server.ts",
     "serve-prod": "ts-node --project server-tsconfig.json ./src/backend/http-server.ts",
-    "serve-prod-dev": "ts-node --project server-tsconfig.json ./src/backend/http-server.ts 8080",
-    "start": "npm-run-all -p api-server serve-prod"
+    "serve-static-dev": "ts-node --project server-tsconfig.json ./src/backend/http-server.ts 8080",
+    "start": "npm run serve-prod"
   },
   "dependencies": {
     "@types/chart.js": "^2.8.3",
@@ -24,7 +24,6 @@
     "esm": "^3.2.25",
     "express": "^4.17.1",
     "flesch-kincaid": "^1.0.4",
-    "npm-run-all": "^4.1.5",
     "register-service-worker": "^1.6.2",
     "sentiment": "^5.0.2",
     "syllable": "^4.0.0",
