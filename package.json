@@ -6,10 +6,10 @@
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
-    "backend": "ts-node --project server-tsconfig.json ./src/backend/api-server.ts",
+    "api-server": "ts-node --project server-tsconfig.json ./src/backend/api-only-server.ts",
     "serve-prod": "ts-node --project server-tsconfig.json ./src/backend/http-server.ts",
     "serve-prod-dev": "ts-node --project server-tsconfig.json ./src/backend/http-server.ts 8080",
-    "start": "npm-run-all -p backend serve-prod"
+    "start": "npm-run-all -p api-server serve-prod"
   },
   "dependencies": {
     "@types/chart.js": "^2.8.3",

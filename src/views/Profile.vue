@@ -140,7 +140,8 @@ export default class Profile extends Vue {
   private async loadUserData() {
     this.errorMessage = null;
     this.response = null;
-    const apiOrigin = location.protocol + '//' + location.hostname + ':81';
+    const port = process.env.NODE_ENV == 'production' ? location.port : 81;
+    const apiOrigin = location.protocol + '//' + location.hostname + ':' + port;
     try {
       const resp = await fetch(`${apiOrigin}/api/user-info?handle=${this.$route.params.handle}`);
       if (resp.ok) {

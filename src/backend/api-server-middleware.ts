@@ -8,8 +8,6 @@ import { readFileSync } from 'fs';
 const apiKeys = JSON.parse(readFileSync(__dirname + '/api-keys.json', 'utf8')) as Twitter.AccessTokenOptions;
 const twitterClient = new Twitter(apiKeys);
 
-const server = express();
-
 interface TwitterAPIResponseError {
   0: {
     code: number;
@@ -25,7 +23,12 @@ function handleIsValid(handle: string) {
   return handle.length <= 15 && /^\w+$/.test(handle);
 }
 
-server.get('/api/user-info', async (req, res) => {
+
+const userInfoAPI = (path: string = '/api/user-info') =>
+async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+  if (req.path !== path) {
+    return next();
+  }
   res.setHeader('Access-Control-Allow-Origin', '*');
   try {
     if (!handleIsValid(req.query.handle)) {
@@ -50,6 +53,6 @@ server.get('/api/user-info', async (req, res) => {
       res.status(500).send('Something went wrong on our end.');
     }
   }
-});
+};
 
-server.listen(81);
+export default userInfoAPI;
