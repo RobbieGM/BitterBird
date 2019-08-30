@@ -18,7 +18,7 @@
         <h3>
           <div class='material-icons'>trending_up</div>Trends
         </h3>
-        <p>BitterBird graphs statistics such as number of followers, how many people they follow, their number of tweets per month, and how many likes their tweets get.</p>
+        <p>BitterBird graphs statistics such as the number of likes and reshares of someone's tweets, their uses of hashtags and mentions, and how many of their last 200 tweets they sent each month.</p>
       </div>
     </div>
     <div class='cta'><button id='try-it' @click='$emit("search")'>Try it</button></div>
