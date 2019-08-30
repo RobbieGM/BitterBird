@@ -21,7 +21,7 @@
         <p>BitterBird graphs statistics such as number of followers, how many people they follow, their number of tweets per month, and how many likes their tweets get.</p>
       </div>
     </div>
-    <div class='cta'><button @click='$emit("search")'>Try it</button></div>
+    <div class='cta'><button id='try-it' @click='$emit("search")'>Try it</button></div>
   </div>
 </template>
 
@@ -39,6 +39,10 @@ div.material-icons {
   // text-align: center;
   font-size: 24px;
   color: $blue;
+}
+
+#try-it {
+  margin-bottom: 24px;
 }
 
 .cta {

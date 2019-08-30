@@ -1,5 +1,5 @@
 <template>
-  <div id='app'>
+  <div id='app' onclick ontouchstart>
     <div id='top-bar'>
       <router-link to='/' id='main-page-link'>
         <img src='/img/icons/logo-60x60.png'/>
@@ -7,7 +7,7 @@
       </router-link>
       <div id='search-container'>
         <span id='search-icon' class='material-icons'>search</span>
-        <input type='text' id='search' v-model='query' placeholder='Enter a Twitter handle or link to a profile...' ref='searchBar' @keydown.enter='search()'/>
+        <input type='text' id='search' v-model='query' placeholder='Enter a Twitter handle or link to a profile...' ref='searchBar' @keydown.enter='search()' autocomplete='off' autocorrect='off' autocapitalize='off' spellcheck='false' data-gramm='false'/>
       </div>
     </div>
     <router-view @search='focusSearch()'/>
@@ -99,7 +99,7 @@ import GraphCard from './components/GraphCard.vue';
 })
 export default class App extends Vue {
 
-  private query: string = '';
+  private query = '';
 
   private focusSearch() {
     (this.$refs.searchBar as HTMLElement).focus();
