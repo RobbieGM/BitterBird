@@ -18,7 +18,8 @@ const MOST_COMMON_WORDS = flattenOneLevel(readdirSync(join(__dirname, 'most-comm
   return readFileSync(fullFilename).toString().split(/\r?\n/);
 }));
 
-console.log('Loaded most common word list');
+// tslint:disable-next-line: no-console
+console.log('data-analyzer.ts: Loaded most common word list');
 
 /**
  * Counts the values of an array and returns them in a map with the
