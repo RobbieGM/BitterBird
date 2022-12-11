@@ -24,7 +24,7 @@
     "connect-history-api-fallback": "^1.6.0",
     "core-js": "^2.6.5",
     "esm": "^3.2.25",
-    "express": "^4.17.1",
+    "express": "^4.17.3",
     "flesch-kincaid": "^1.0.4",
     "register-service-worker": "^1.6.2",
     "sentiment": "^5.0.2",
